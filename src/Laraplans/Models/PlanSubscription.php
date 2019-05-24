@@ -84,7 +84,7 @@ class PlanSubscription extends Model implements PlanSubscriptionInterface
         parent::boot();
 
         static::created(function ($model) {
-            Event::fire(new SubscriptionCreated($model));
+            SubscriptionCreated::dispatch($model);
         });
 
         static::saving(function ($model) {
@@ -97,7 +97,7 @@ class PlanSubscription extends Model implements PlanSubscriptionInterface
         static::saved(function ($model) {
             // check if there is a plan and it is changed
             if ($model->getOriginal('plan_id') && $model->getOriginal('plan_id') !== $model->plan_id) {
-                event(new SubscriptionPlanChanged($model));
+                SubscriptionPlanChanged::dispatch($model);
             }
         });
     }
