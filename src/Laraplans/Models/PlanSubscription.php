@@ -45,7 +45,7 @@ class PlanSubscription extends Model implements PlanSubscriptionInterface
         'starts_at',
         'ends_at',
         'canceled_at'
-    ];
+    ];    
 
     /**
      * The attributes that should be mutated to dates.
@@ -83,21 +83,10 @@ class PlanSubscription extends Model implements PlanSubscriptionInterface
     {
         parent::boot();
 
-        static::created(function ($model) {
-            SubscriptionCreated::dispatch($model);
-        });
-
         static::saving(function ($model) {
             // Set period if it wasn't set
             if (! $model->ends_at) {
                 $model->setNewPeriod();
-            }
-        });
-
-        static::saved(function ($model) {
-            // check if there is a plan and it is changed
-            if ($model->getOriginal('plan_id') && $model->getOriginal('plan_id') !== $model->plan_id) {
-                SubscriptionPlanChanged::dispatch($model);
             }
         });
     }
